@@ -22,7 +22,7 @@ let qr = new QRious({
 let latestVCard = '';
 let customLogo = qrLogo.src;
 
-// Helper: escape values for vCard
+// escape values for vCard
 function escapeVcard(value = '') {
   return String(value)
     .replace(/\r?\n/g, '\\n')
@@ -30,7 +30,13 @@ function escapeVcard(value = '') {
     .replace(/;/g, '\\;');
 }
 
-// ✅ Build vCard and WhatsApp link
+function escapeVcardNoSemi(value = '') {
+  return String(value)
+    .replace(/\r?\n/g, '\\n')
+    .replace(/,/g, '\\,');   // only escape commas and newlines
+}
+
+//  Build vCard and WhatsApp link
 function buildVCard() {
   const fn = `${form.firstName.value.trim()} ${form.lastName.value.trim()}`.trim();
   const n = `${form.lastName.value.trim()};${form.firstName.value.trim()}`;
@@ -41,7 +47,7 @@ function buildVCard() {
   const fields = [];
   fields.push('BEGIN:VCARD');
   fields.push('VERSION:3.0');
-  fields.push(`N:${escapeVcard(n)}`);
+  fields.push(`N:${escapeVcardNoSemi(n)}`);
   fields.push(`FN:${escapeVcard(fn)}`);
   if (form.company.value) fields.push(`ORG:${escapeVcard(form.company.value)}`);
   if (form.title.value) fields.push(`TITLE:${escapeVcard(form.title.value)}`);
@@ -223,7 +229,7 @@ downloadPngBtn.onclick = () => {
   });
 };
 
-// === Reset ===
+
 resetBtn.onclick = () => {
   form.reset();
   qr.value = '';
@@ -234,4 +240,6 @@ resetBtn.onclick = () => {
   qrHint.textContent = 'QR will appear after generating.';
   downloadVcfBtn.disabled = true;
   downloadPngBtn.disabled = true;
+
 }
+
